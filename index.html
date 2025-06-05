@@ -115,6 +115,9 @@
             <label for="irlAge">IRL leeftijd</label>
             <input type="number" id="irlAge" name="irlAge" required>
 
+            <label for="discord">Ingame BSN (staat op je ID kaart)</label>
+            <input type="text" id="BSN" name="BSN" required>
+            
             <label for="discord">Discord naam (inclusief #0000)</label>
             <input type="text" id="discord" name="discord" required>
 
@@ -223,6 +226,7 @@
                 irlName: e.target.irlName.value,
                 irlAge: e.target.irlAge.value,
                 discord: e.target.discord.value,
+                BSN : e.target.BSN.value,
                 functie: e.target.functie.value,
                 rol: e.target.rol.value,
                 motivatie: e.target.motivatie.value,
@@ -244,6 +248,7 @@
                 ----------------------
                 Ingame naam:           ${data.ingameName}
                 Ingame geboortedatum:  ${data.dob}
+                Ingame BSN:            ${data.BSN}
                 IRL naam:              ${data.irlName}
                 IRL leeftijd:          ${data.irlAge}
                 Discord naam:          ${data.discord}
