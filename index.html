@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sollicitatieformulier</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #ffffff);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 700px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #00796b;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: 600;
+            margin-top: 20px;
+            display: block;
+            color: #333;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #26a69a;
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        button {
+            background-color: #00796b;
+            color: #fff;
+            padding: 14px;
+            width: 100%;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #004d40;
+        }
+
+        .extra-vragen {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .video-container {
+            display: none;
+            margin-top: 20px;
+        }
+
+        iframe {
+            width: 100%;
+            height: 315px;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <form id="sollicitatieForm">
+            <h2>Sollicitatieformulier</h2>
+
+            <label for="ingameName">Ingame naam</label>
+            <input type="text" id="ingameName" name="ingameName" required>
+
+            <label for="dob">Ingame geboortedatum</label>
+            <input type="date" id="dob" name="dob" required>
+
+            <label for="irlName">IRL naam</label>
+            <input type="text" id="irlName" name="irlName" required>
+
+            <label for="irlAge">IRL leeftijd</label>
+            <input type="number" id="irlAge" name="irlAge" required>
+
+            <label for="discord">Discord naam (inclusief #0000)</label>
+            <input type="text" id="discord" name="discord" required>
+
+            <label for="functie">Welke functie?</label>
+            <select id="functie" name="functie" required>
+                <option value="">Selecteer...</option>
+                <option value="politie">Politie</option>
+                <option value="ambulance">Ambulance</option>
+                <option value="pechhulp">Pechhulp</option>
+            </select>
+
+            <label for="rol">Welke rol?</label>
+            <select id="rol" name="rol" required>
+                <option value="">Selecteer...</option>
+                <option value="werknemer">Werknemer</option>
+                <option value="leidinggevende">Leidinggevende</option>
+            </select>
+
+            <label for="motivatie">Waarom solliciteer je?</label>
+            <textarea id="motivatie" name="motivatie" rows="5" required></textarea>
+
+            <div class="video-container" id="videoContainer">
+                <label>Introductievideo</label>
+                <iframe id="functieVideo" src="" frameborder="0" allowfullscreen></iframe>
+            </div>
+
+
+            <div class="extra-vragen" id="extraVragen">
+                <label for="ervaring">Heb je ervaring met deze functie (IRL of in RP)?</label>
+                <textarea id="ervaring" name="ervaring" rows="4" required></textarea>
+
+                <label for="sterkePunten">Wat zijn jouw sterke punten?</label>
+                <textarea id="sterkePunten" name="sterkePunten" rows="4" required></textarea>
+
+                <label for="zwakkePunten">Wat zijn jouw zwakke punten?</label>
+                <textarea id="zwakkePunten" name="zwakkePunten" rows="4" required></textarea>
+
+                <label for="rolInTeam">Hoe zie jij je rol in een team?</label>
+                <textarea id="rolInTeam" name="rolInTeam" rows="4" required></textarea>
+
+                <label for="stressSituaties">Hoe ga jij om met stressvolle situaties?</label>
+                <textarea id="stressSituaties" name="stressSituaties" rows="4" required></textarea>
+            </div>
+
+
+            <button type="submit">Verstuur sollicitatie</button>
+        </form>
+    </div>
+
+    <script>
+        const webhooks = {
+            politie: 'https://discord.com/api/webhooks/WEBHOOK_POLITIE',
+            ambulance: 'https://discord.com/api/webhooks/WEBHOOK_AMBULANCE',
+            pechhulp: 'https://www.youtube.com/embed/BFibUynQmZg'
+        };
+
+        const videos = {
+            politie: 'https://www.youtube.com/embed/z_YMhPh2odk',
+            ambulance: 'https://www.youtube.com/embed/IGDZ-XhQBAM',
+            pechhulp: 'https://www.youtube.com/embed/BFibUynQmZg'
+        };
+
+        const functieSelect = document.getElementById('functie');
+        const videoContainer = document.getElementById('videoContainer');
+        const videoFrame = document.getElementById('functieVideo');
+        const extraVragen = document.getElementById('extraVragen');
+
+        functieSelect.addEventListener('change', () => {
+            const selected = functieSelect.value;
+            if (videos[selected]) {
+                // Voeg autoplay en mute toe aan de YouTube URL
+                const autoplayUrl = `${videos[selected]}?autoplay=1&mute=1&rel=0`;
+                videoFrame.src = autoplayUrl;
+
+                // Luister op een klik om geluid aan te zetten
+                videoFrame.addEventListener('load', () => {
+                    videoFrame.contentWindow.postMessage('{"event":"command","func":"unMute","args":""}', '*');
+                });
+                videoFrame.src = autoplayUrl;
+                videoContainer.style.display = 'block';
+                extraVragen.style.display = 'block';
+            } else {
+                videoContainer.style.display = 'none';
+                extraVragen.style.display = 'none';
+                videoFrame.src = '';
+            }
+        });
+
+        function downloadTextFile(filename, content) {
+            const blob = new Blob([content], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        document.getElementById('sollicitatieForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const id = Math.floor(Math.random() * 1000000);
+            const data = {
+                ingameName: e.target.ingameName.value,
+                dob: e.target.dob.value,
+                irlName: e.target.irlName.value,
+                irlAge: e.target.irlAge.value,
+                discord: e.target.discord.value,
+                functie: e.target.functie.value,
+                rol: e.target.rol.value,
+                motivatie: e.target.motivatie.value,
+                ervaring: e.target.ervaring?.value || '',
+                sterkePunten: e.target.sterkePunten?.value || '',
+                zwakkePunten: e.target.zwakkePunten?.value || '',
+                rolInTeam: e.target.rolInTeam?.value || '',
+                stressSituaties: e.target.stressSituaties?.value || '',
+                id: id
+            };
+
+            const formatted = `
+                ==============================
+                      SOLLICITATIEDOSSIER
+                           #${id}
+                ==============================
+
+                Persoonlijke gegevens:
+                ----------------------
+                Ingame naam:           ${data.ingameName}
+                Ingame geboortedatum:  ${data.dob}
+                IRL naam:              ${data.irlName}
+                IRL leeftijd:          ${data.irlAge}
+                Discord naam:          ${data.discord}
+
+                Functiegegevens:
+                ----------------
+                Gekozen functie:       ${data.functie.charAt(0).toUpperCase() + data.functie.slice(1)}
+                Rol binnen functie:    ${data.rol.charAt(0).toUpperCase() + data.rol.slice(1)}
+
+                Motivatie:
+                ----------
+                ${data.motivatie}
+
+                Ervaring:
+                ---------
+                ${data.ervaring}
+
+                Sterke punten:
+                --------------
+                ${data.sterkePunten}
+
+                Zwakke punten:
+                --------------
+                ${data.zwakkePunten}
+
+                Rol in team:
+                ------------
+                ${data.rolInTeam}
+
+                Omgaan met stress:
+                ------------------
+                ${data.stressSituaties}
+
+                ==============================
+                Einde dossier
+                ==============================
+                `;
+
+            downloadTextFile(`sollicitatie_${id}.txt`, formatted);
+
+            const webhookUrl = webhooks[data.functie];
+            if (webhookUrl) {
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: formatted })
+                });
+            }
+
+            alert('Je sollicitatie is verzonden!');
+            e.target.reset();
+            videoContainer.style.display = 'none';
+            extraVragen.style.display = 'none';
+            videoFrame.src = '';
+        });
+    </script>
+</body>
+
+</html>
